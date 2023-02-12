@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Orologio </title>
+  </head>
+<body>
+
+<canvas id="canvas" width="400" height="400">
+</canvas>
+
+<script>
+var canvas = document.getElementById("canvas");
+var orologio = canvas.getContext("2d");
+var raggio = canvas.height / 2;
+orologio.translate(raggio, raggio);
+raggio = raggio * 0.90
+setInterval(drawClock, 1000);
+
+function drawClock() {
+  drawFace(orologio, raggio);
+  drawNumbers(orologio, raggio);
+  drawTime(orologio, raggio);
+}
+
+function drawFace(orologio, raggio) {
+  var grad;
+  orologio.beginPath();
+  orologio.arc(0, 0, raggio, 0, 2*Math.PI);
+  orologio.fillStyle = 'white';
+  orologio.fill();
+  grad = orologio.createRadialGradient(0,0,raggio*0.95, 0,0,raggio*1.05);
+  grad.addColorStop(0, '#330000');
+  grad.addColorStop(0.5, 'white');
+  grad.addColorStop(1, '#330000');
+  orologio.strokeStyle = grad;
+  orologio.lineWidth = raggio*0.1;
+  orologio.stroke();
+  orologio.beginPath();
+  orologio.arc(0, 0, raggio*0.1, 0, 2*Math.PI);
+  orologio.fillStyle = '#330000';
+  orologio.fill();
+}
+
+function drawNumbers(orologio, raggio) {
+  var ang;
+  var num;
+  orologio.font = raggio*0.15 + "px arial";
+  orologio.textBaseline="middle";
+  orologio.textAlign="center";
+  for(num = 1; num < 13; num++){
+    ang = num * Math.PI / 6;
+    orologio.rotate(ang);
+    orologio.translate(0, -raggio*0.85);
+    orologio.rotate(-ang);
+    orologio.fillText(num.toString(), 0, 0);
+    orologio.rotate(ang);
+    orologio.translate(0, raggio*0.85);
+    orologio.rotate(-ang);
+  }
+}
+
+function drawTime(orologio, raggio){
+    var adesso = new Date();
+    var ora = adesso.getHours();
+    var minuti = adesso.getMinutes();
+    var secondi = adesso.getSeconds();
+    ora=ora%12;
+    ora=(ora*Math.PI/6)+
+    (minuti*Math.PI/(6*60))+
+    (secondi*Math.PI/(360*60));
+    drawHand(orologio, ora, raggio*0.5, raggio*0.07);
+    minuti=(minuti*Math.PI/30)+(secondi*Math.PI/(30*60));
+    drawHand(orologio, minuti, raggio*0.8, raggio*0.07);
+    secondi=(secondi*Math.PI/30);
+    drawHand(orologio, secondi, raggio*0.9, raggio*0.02);
+}
+
+function drawHand(orologio, pos, length, width) {
+  orologio.beginPath();
+  orologio.lineWidth = width;
+  orologio.lineCap = "round";
+  orologio.moveTo(0,0);
+  orologio.rotate(pos);
+  orologio.lineTo(0, -length);
+  orologio.stroke();
+  orologio.rotate(-pos);
+}
+</script>
+
+</body>
+</html>
